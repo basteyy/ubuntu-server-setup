@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.org/jasonheecs/ubuntu-server-setup.svg?branch=master)](https://travis-ci.org/jasonheecs/ubuntu-server-setup)
 
 This is a setup script to automate the setup and provisioning of Ubuntu servers. It does the following:
+* Update/Upgrade the system
+* Set up the hostname
 * Adds or updates a user account with sudo access
 * Adds a public ssh key for the new user account
 * Disables password authentication to the server
@@ -14,14 +16,13 @@ This is a setup script to automate the setup and provisioning of Ubuntu servers.
 # Installation
 SSH into your server and install git if it is not installed:
 ```bash
-sudo apt-get update
 sudo apt-get install git
 ```
 
 Clone this repository into your home directory:
 ```bash
 cd ~
-git clone https://github.com/jasonheecs/ubuntu-server-setup.git
+git clone https://github.com/basteyy/ubuntu-server-setup.git
 ```
 
 Run the setup script

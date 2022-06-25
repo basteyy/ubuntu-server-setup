@@ -18,48 +18,97 @@ includeDependencies
 output_file="output.log"
 
 function main() {
-    read -rp "Do you want to create a new non-root user? (Recommended) [Y/N] " createUser
 
-    # Run setup functions
-    trap cleanup EXIT SIGHUP SIGINT SIGTERM
+  # Check Root
+  if [[ $EUID -ne 0 ]]; then
+     echo "This script must be run as root"
+     exit 1
+  fi
 
-    if [[ $createUser == [nN] ]]; then
-        username=$(whoami)
-        updateUserAccount "${username}"
-    elif [[ $createUser == [yY] ]]; then
-        read -rp "Enter the username of the new user account: " username
-        addUserAccount "${username}"
-    else
-	echo 'This is not a valid choice!'
-	exit 1
-    fi
+  # Update System?
+  read -rp "Do you want to update the system (Recommended) [Y/N] " updateSystem
 
-    read -rp $'Paste in the public SSH key for the new user:\n' sshKey
-    echo 'Running setup script...'
-    logTimestamp "${output_file}"
+  if [[ $updateSystem == [nN] ]]; then
+    echo "System not updated"
+  elif [[ $updateSystem == [yY] ]]; then
+    updateSystem
+  else
+    echo 'This is not a valid choice!'
+    exit 1
+  fi
 
-    exec 3>&1 >>"${output_file}" 2>&1
+  # Upgrade the system?
+  read -rp "Do you want to upgrade the system (Recommended) [Y/N] " upgradeSystem
 
+  if [[ $upgradeSystem == [nN] ]]; then
+    echo "System not upgraded"
+  elif [[ $upgradeSystem == [yY] ]]; then
+    upgradeSystem
+  else
+    echo 'This is not a valid choice!'
+    exit 1
+  fi
 
-    disableSudoPassword "${username}"
-    addSSHKey "${username}" "${sshKey}"
-    changeSSHConfig
-    setupUfw
+  # Hostname
+  read -rp "Input the hostname of the system [Required] " systemHostname
 
-    if ! hasSwap; then
-        setupSwap
-    fi
+  # Validate domain name
+  validate="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
 
-    setupTimezone
+  # If user doesn't enter anything
+  if [[ -z "$systemHostname" ]]; then
+      echo "You must enter a domain"
+  fi
 
-    echo "Configuring System Time... " >&3
-    configureNTP
+  if [[ "$systemHostname" =~ $validate ]]; then
+      updateHostname "${systemHostname}"
+  else
+      echo "Not valid $systemHostname name."
+      exit 1
+  fi
 
-    sudo service ssh restart
+  # Create a new User?
+  read -rp "Do you want to create a new non-root user? (Recommended) [Y/N] " createUser
 
-    cleanup
+  # Run setup functions
+  trap cleanup EXIT SIGHUP SIGINT SIGTERM
 
-    echo "Setup Done! Log file is located at ${output_file}" >&3
+  if [[ $createUser == [nN] ]]; then
+      username=$(whoami)
+      updateUserAccount "${username}"
+  elif [[ $createUser == [yY] ]]; then
+      read -rp "Enter the username of the new user account: " username
+      addUserAccount "${username}"
+  else
+    echo 'This is not a valid choice!'
+    exit 1
+  fi
+
+  read -rp $'Paste in the public SSH key for the new user:\n' sshKey
+  echo 'Running setup script...'
+  logTimestamp "${output_file}"
+
+  exec 3>&1 >>"${output_file}" 2>&1
+
+  disableSudoPassword "${username}"
+  addSSHKey "${username}" "${sshKey}"
+  changeSSHConfig
+  setupUfw
+
+  if ! hasSwap; then
+      setupSwap
+  fi
+
+  setupTimezone
+
+  echo "Configuring System Time... " >&3
+  configureNTP
+
+  sudo service ssh restart
+
+  cleanup
+
+  echo "Setup Done! Log file is located at ${output_file}" >&3
 }
 
 function setupSwap() {

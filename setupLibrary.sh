@@ -1,5 +1,37 @@
 #!/bin/bash
 
+# Update the hostname of the system
+# Arguments:
+#   systemHostname
+function updateHostname() {
+  local systemHostname=${1}
+  CUR_HOSTNAME=$(cat /etc/hostname)
+
+  # Display the current hostname
+  echo "The current hostname is $CUR_HOSTNAME"
+
+  # Change the hostname
+  hostnamectl set-hostname $systemHostname
+  hostname $systemHostname
+
+  # Change hostname in /etc/hosts & /etc/hostname
+  sudo sed -i "s/$CUR_HOSTNAME/$systemHostname/g" /etc/hosts
+  sudo sed -i "s/$CUR_HOSTNAME/$systemHostname/g" /etc/hostname
+
+  # Display new hostname
+  echo "The new hostname is $systemHostname"
+}
+
+# Update system
+function updateSystem() {
+  sudo apt update -y
+}
+
+# Upgrade system
+function upgradeSystem() {
+  sudo apt upgrade -y
+}
+
 # Update the user account
 # Arguments:
 #   Account Username
