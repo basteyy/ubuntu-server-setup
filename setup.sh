@@ -67,6 +67,23 @@ function main() {
       exit 1
   fi
 
+  # Set up webserver with nginx and lets encrypt?
+  read -rp "Do you want to se tup the webserver (nginx, php, lets encrypt)? [Y/N]" webserver
+  if [[ $webserver == [nN] ]]; then
+    setupWebserver="n"
+  elif [[ $webserver == [yY] ]]; then
+    setupWebserver="y"
+
+    #read -rp "Please select the ? [Y/N]" php_eight_two
+    read -rp "Do you like to install PHP Version 8.1? [Y/N]" php_eight_one
+    read -rp "Do you like to install PHP Version 8.0? [Y/N]" php_eight_null
+    read -rp "Do you like to install PHP Version 7.4? [Y/N]" php_seven_four
+
+  else
+    echo 'This is not a valid choice!'
+    exit 1
+  fi
+
   # Create a new User?
   read -rp "Do you want to create a new non-root user? (Recommended) [Y/N] " createUser
 
@@ -94,6 +111,42 @@ function main() {
   addSSHKey "${username}" "${sshKey}"
   changeSSHConfig
   setupUfw
+
+  if [[ setupWebserver == [y] ]]; then
+    installNginx
+    installLetsEncrypt
+
+    if [ [php_seven_four == [Yy]] || [php_eight_null == [Yy]] || [php_eight_one == [Yy]] ]; then
+      installDefaultPhpThings
+    fi
+
+    ## Setup PHP
+    if [ [php_eight_one == [Yy]] ]; then
+      installPhpEightOne
+    else
+      echo 'PHP 8.1 is not installed'
+    fi
+
+    if [ [php_eight_null == [Yy]] ]; then
+      installPhpEightNull
+    else
+      echo 'PHP 8.0 is not installed'
+    fi
+
+    if [ [php_seven_four == [Yy]] ]; then
+      installPhpEightOne
+    else
+      echo 'PHP 7.4 is not installed'
+    fi
+
+    # Install composer in case a php version ins installed
+    if [ [php_seven_four == [Yy]] || [php_eight_null == [Yy]] || [php_eight_one == [Yy]] ]; then
+      installComposer
+    else
+      echo 'Composer is not installed, because no php version ins selected'
+    fi
+
+  fi
 
   if ! hasSwap; then
       setupSwap

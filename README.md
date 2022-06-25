@@ -10,8 +10,12 @@ This is a setup script to automate the setup and provisioning of Ubuntu servers.
 * Deny root login to the server
 * Setup Uncomplicated Firewall
 * Create Swap file based on machine's installed memory
-* Setup the timezone for the server (Default to "Asia/Singapore")
+* Set up the timezone for the server (Default to "Asia/Singapore")
 * Install Network Time Protocol
+* Set up nginx
+* Set up PHP (multiple or one version)
+* Set up lets encrypt
+* Set uo composer
 
 # Installation
 SSH into your server and install git if it is not installed:

@@ -1,5 +1,57 @@
 #!/bin/bash
 
+
+function installDefaultPhpThings() {
+  sudo apt install software-properties-common -y
+  sudo add-apt-repository ppa:ondrej/php -y
+  sudo apt update -y
+}
+
+# Install php 8.2
+function installPhpEightTwo() {
+  sudo apt -y install php8.2-fpm
+  sudo apt -y install php8.2-{bcmath,xml,fpm,mysql,zip,intl,ldap,gd,cli,bz2,curl,mbstring,pgsql,opcache,soap}
+}
+
+# Install php 8.1
+function installPhpEightOne() {
+  sudo apt -y install php8.1-fpm
+  sudo apt -y install php8.1-{bcmath,xml,fpm,mysql,zip,intl,ldap,gd,cli,bz2,curl,mbstring,pgsql,opcache,soap}
+}
+
+# Install php 8.0
+function installPhpEightNull() {
+  sudo apt -y install php8.0-fpm
+  sudo apt -y install php8.0-{bcmath,xml,fpm,mysql,zip,intl,ldap,gd,cli,bz2,curl,mbstring,pgsql,opcache,soap}
+}
+
+# Install php 7.4
+function installPhpSevenFour() {
+  sudo apt -y install php7.4-fpm
+  sudo apt -y install php7.4-{bcmath,xml,fpm,mysql,zip,intl,ldap,gd,cli,bz2,curl,mbstring,pgsql,opcache,soap,json}
+}
+
+# Install nginx webserver
+function installNginx() {
+  sudo apt install nginx -y
+}
+
+# Install composer
+function installComposer() {
+  sudo apt -y install unzip curl
+  curl -sS https://getcomposer.org/installer -o composer-setup.php
+  HASH=`curl -sS https://composer.github.io/installer.sig`
+  echo $HASH
+  php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+  sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+}
+
+# Install lets encrypt
+function installLetsEncrypt() {
+  sudo apt install certbot python3-certbot-nginx -y
+}
+
+
 # Update the hostname of the system
 # Arguments:
 #   systemHostname
