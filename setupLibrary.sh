@@ -45,6 +45,7 @@ function installComposer() {
   echo $HASH
   php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
   sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  sudo rm composer-setup.php
 }
 
 # Install lets encrypt
