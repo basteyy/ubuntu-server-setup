@@ -17,6 +17,9 @@ This is a setup script to automate the setup and provisioning of Ubuntu servers.
 * Set up lets encrypt
 * Set uo composer
 
+This repository is a fork of [ubuntu-server-setup from Jason Hee](https://github.com/jasonheecs/ubuntu-server-setup). I flavored it with a few things I need normally on every 
+new server. 
+
 # Installation
 SSH into your server and install git if it is not installed:
 ```bash
