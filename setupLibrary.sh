@@ -34,6 +34,7 @@ function installPhpSevenFour() {
 # Install nginx webserver
 function installNginx() {
   sudo apt install nginx -y
+  sudo ufw allow http
 }
 
 # Install composer
@@ -49,6 +50,7 @@ function installComposer() {
 # Install lets encrypt
 function installLetsEncrypt() {
   sudo apt install certbot python3-certbot-nginx -y
+  sudo ufw allow https
 }
 
 
